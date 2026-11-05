@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: giftly-ml
+    runtime: docker
+    plan: free
+    dockerfilePath: ./ml-service/Dockerfile
+    dockerContext: ./ml-service
+    healthCheckPath: /health
+    envVars:
+      - key: ML_API_KEY
+        sync: false
+
+  - type: web
+    name: giftly-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_ORIGIN
+        value: https://${{giftly-web.host}}
+      - key: ML_SERVICE_URL
+        value: https://${{giftly-ml.host}}
+      - key: ML_API_KEY
+        sync: false
+
+  - type: web
+    name: giftly-web
+    runtime: docker
+    plan: free
+    dockerfilePath: ./client/Dockerfile
+    dockerContext: ./client
+    healthCheckPath: /
+    envVars:
+      - key: API_URL
+        value: https://${{giftly-api.host}}
+      - key: NGINX_ENVSUBST_FILTER
+        value: ^API_URL$

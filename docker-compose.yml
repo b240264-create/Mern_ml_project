@@ -1,0 +1,35 @@
+# Optional: run the whole stack with Docker.   (see README, "Run with Docker")
+services:
+  mongo:
+    image: mongo:7
+    volumes: [mongo-data:/data/db]
+
+  ml:
+    build: ./ml-service
+    environment:
+      ML_API_KEY: dev-ml-key
+    volumes:
+      - ./ml-service/artifacts:/app/artifacts   # created by train.py
+    
+
+  api:
+    build: ./server
+    environment:
+      MONGO_URI: mongodb://mongo:27017/shop
+      JWT_SECRET: change-me-to-a-long-random-string
+      CLIENT_ORIGIN: http://localhost:8080
+      ML_SERVICE_URL: http://ml:8000
+      ML_API_KEY: dev-ml-key
+    depends_on: [mongo]
+    
+
+  web:
+    build: ./client
+    depends_on: [api]
+    environment:
+      API_URL: http://api:5000
+      NGINX_ENVSUBST_FILTER: "^API_URL$"
+    ports: ["8080:80"]
+
+volumes:
+  mongo-data:

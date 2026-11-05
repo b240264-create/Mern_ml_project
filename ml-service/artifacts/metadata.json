@@ -1,0 +1,23 @@
+{
+  "trained_at": "2026-11-05T07:42:52.786168+00:00",
+  "customers": 403,
+  "products_in_model": 120,
+  "segments": [
+    "Champions",
+    "Loyal",
+    "Potential",
+    "At-Risk",
+    "Hibernating",
+    "Lost"
+  ],
+  "propensity_auc": 0.8228,
+  "data_through": "2026-11-05",
+  "offers": {
+    "Champions": "Loyalty points",
+    "Loyal": "Loyalty points",
+    "Potential": "Free shipping",
+    "At-Risk": "Free shipping",
+    "Hibernating": "10% discount",
+    "Lost": "20% discount"
+  }
+}
